@@ -50,8 +50,34 @@ impl Default for DndEdgeWorkspaceSwitch {
     }
 }
 
-#[derive(knuffel::Decode, Debug, Default, Clone, Copy, PartialEq)]
+#[derive(knuffel::Decode, Debug, Clone, Copy, PartialEq)]
 pub struct HotCorners {
     #[knuffel(child)]
     pub off: bool,
+    #[knuffel(child)]
+    pub top_left: bool,
+    #[knuffel(child)]
+    pub top_right: bool,
+    #[knuffel(child)]
+    pub bottom_left: bool,
+    #[knuffel(child)]
+    pub bottom_right: bool,
+}
+
+impl HotCorners {
+    pub fn is_enabled(&self) -> bool {
+        !self.off
+    }
+}
+
+impl Default for HotCorners {
+    fn default() -> Self {
+        Self {
+            off: false,
+            top_left: true,
+            top_right: false,
+            bottom_left: false,
+            bottom_right: false,
+        }
+    }
 }

@@ -1,6 +1,6 @@
 use niri_ipc::{ConfiguredMode, Transform};
 
-use crate::{Color, FloatOrInt};
+use crate::{gestures::HotCorners, Color, FloatOrInt};
 
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct Outputs(pub Vec<Output>);
@@ -27,6 +27,8 @@ pub struct Output {
     pub background_color: Option<Color>,
     #[knuffel(child)]
     pub backdrop_color: Option<Color>,
+    #[knuffel(child)]
+    pub hot_corners: Option<HotCorners>,
 }
 
 impl Output {
@@ -56,6 +58,7 @@ impl Default for Output {
             variable_refresh_rate: None,
             background_color: None,
             backdrop_color: None,
+            hot_corners: None,
         }
     }
 }
