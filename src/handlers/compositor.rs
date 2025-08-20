@@ -176,22 +176,6 @@ impl CompositorHandler for State {
                         }
                     });
 
-                    let parent = toplevel
-                        .parent()
-                        .and_then(|parent| self.niri.layout.find_window_and_output(&parent))
-                        // Only consider the parent if we configured the window for the same
-                        // output.
-                        //
-                        // Normally when we're following the parent, the configured output will be
-                        // None. If the configured output is set, that means it was set explicitly
-                        // by a window rule or a fullscreen request.
-                        .filter(|(_, parent_output)| {
-                            parent_output.is_none()
-                                || output.is_none()
-                                || output.as_ref() == *parent_output
-                        })
-                        .map(|(mapped, _)| mapped.window.clone());
-
                     // The mapped pre-commit hook deals with dma-bufs on its own.
                     self.remove_default_dmabuf_pre_commit_hook(surface);
                     let hook = add_mapped_toplevel_pre_commit_hook(toplevel);
@@ -201,10 +185,7 @@ impl CompositorHandler for State {
                     };
                     let window = mapped.window.clone();
 
-                    let target = if let Some(p) = &parent {
-                        // Open dialogs next to their parent window.
-                        AddWindowTarget::NextTo(p)
-                    } else if let Some(id) = workspace_id {
+                    let target = if let Some(id) = workspace_id {
                         AddWindowTarget::Workspace(id)
                     } else if let Some(output) = &output {
                         AddWindowTarget::Output(output)
