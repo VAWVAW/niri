@@ -23,6 +23,7 @@ gestures {
 
     hot-corners {
         // off
+        position "top-left"
     }
 }
 ```
@@ -91,6 +92,23 @@ Also works during drag-and-dropping something.
 gestures {
     hot-corners {
         off
+    }
+}
+```
+
+#### `position`
+
+<sup>next release</sup>
+
+Change which corner will trigger the overview.
+Can be `top-left`, `top-right`, `bottom-left`, or `bottom-right`.
+
+
+```kdl
+// Use top right corner as trigger
+gestures {
+    hot-corners {
+        position "top-right"
     }
 }
 ```
