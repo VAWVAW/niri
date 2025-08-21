@@ -3128,7 +3128,20 @@ impl Niri {
 
         let hot_corners = self.config.borrow().gestures.hot_corners;
         if !hot_corners.off {
-            let hot_corner = Rectangle::from_size(Size::from((1., 1.)));
+            let size = output_size(output);
+            let hot_corner = match hot_corners.position {
+                niri_config::HotCornerPosition::TopLeft => Rectangle::from_size(Size::from((1., 1.))),
+                niri_config::HotCornerPosition::TopRight => {
+                    Rectangle::new(Point::from((size.w - 1., 0.)), Size::from((1., 1.)))
+                }
+                niri_config::HotCornerPosition::BottomLeft => {
+                    Rectangle::new(Point::from((1., size.h - 1.)), Size::from((1., 1.)))
+                }
+                niri_config::HotCornerPosition::BottomRight => Rectangle::new(
+                    Point::from((size.w - 1., size.h - 1.)),
+                    Size::from((1., 1.)),
+                ),
+            };
             if hot_corner.contains(pos_within_output) {
                 return true;
             }
@@ -3403,7 +3416,23 @@ impl Niri {
         } else {
             let hot_corners = self.config.borrow().gestures.hot_corners;
             if !hot_corners.off {
-                let hot_corner = Rectangle::from_size(Size::from((1., 1.)));
+                let size = output_size(output);
+                let hot_corner = match hot_corners.position {
+                    niri_config::HotCornerPosition::TopLeft => {
+                        Rectangle::from_size(Size::from((1., 1.)))
+                    }
+                    niri_config::HotCornerPosition::TopRight => {
+                        Rectangle::new(Point::from((size.w - 1., 0.)), Size::from((1., 1.)))
+                    }
+                    niri_config::HotCornerPosition::BottomLeft => {
+                        Rectangle::new(Point::from((1., size.h - 1.)), Size::from((1., 1.)))
+                    }
+                    niri_config::HotCornerPosition::BottomRight => Rectangle::new(
+                        Point::from((size.w - 1., size.h - 1.)),
+                        Size::from((1., 1.)),
+                    ),
+                };
+
                 if hot_corner.contains(pos_within_output) {
                     rv.hot_corner = true;
                     return rv;

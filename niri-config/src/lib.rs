@@ -1374,10 +1374,22 @@ impl Default for DndEdgeWorkspaceSwitch {
     }
 }
 
+#[derive(knuffel::DecodeScalar, Debug, Default, PartialEq, Eq, Clone, Copy)]
+pub enum HotCornerPosition {
+    #[default]
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight
+}
+
 #[derive(knuffel::Decode, Debug, Default, Clone, Copy, PartialEq)]
 pub struct HotCorners {
     #[knuffel(child)]
     pub off: bool,
+
+    #[knuffel(child, unwrap(argument), default)]
+    pub position: HotCornerPosition,
 }
 
 #[derive(knuffel::Decode, Debug, Clone, Copy, PartialEq)]
