@@ -3055,7 +3055,7 @@ impl State {
         pointer.frame(self);
     }
 
-    fn on_pointer_axis<I: InputBackend>(&mut self, event: I::PointerAxisEvent) {
+    fn on_pointer_axis<I: InputBackend + 'static>(&mut self, event: I::PointerAxisEvent) where I::Device: 'static {
         let pointer = &self.niri.seat.get_pointer().unwrap();
 
         let source = event.source();
@@ -3266,8 +3266,16 @@ impl State {
             let mods = self.niri.seat.get_keyboard().unwrap().modifier_state();
             let modifiers = modifiers_from_state(mods);
 
-            let horizontal = horizontal_amount.unwrap_or(0.);
-            let vertical = vertical_amount.unwrap_or(0.);
+            let mut horizontal = horizontal_amount.unwrap_or(0.);
+            let mut vertical = vertical_amount.unwrap_or(0.);
+
+            let device = event.device();
+            if let Some(device) = (&device as &dyn Any).downcast_ref::<input::Device>() {
+                if !device.config_scroll_natural_scroll_enabled() {
+                    horizontal = -horizontal;
+                    vertical = -vertical;
+                }
+            }
 
             if should_handle_in_overview && modifiers.is_empty() {
                 let mut redraw = false;
@@ -3792,13 +3800,9 @@ impl State {
 
         let uninverted_delta_y = delta_y;
 
-        let device = event.device();
-        if let Some(device) = (&device as &dyn Any).downcast_ref::<input::Device>() {
-            if device.config_scroll_natural_scroll_enabled() {
-                delta_x = -delta_x;
-                delta_y = -delta_y;
-            }
-        }
+        // force natural scroll
+        delta_x = -delta_x;
+        delta_y = -delta_y;
 
         let is_overview_open = self.niri.layout.is_overview_open();
 
